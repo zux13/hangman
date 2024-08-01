@@ -69,13 +69,15 @@ public class Display {
             2, "Средне",
             3, "Сложно");
 
-    public static void startMessage(int maxAttempts) {
+    public static void welcomeMessage(int maxAttempts) {
         System.out.printf("""
                 Добро пожаловать в игру 'Висельник'!
                 Ваша задача — угадать слово за %d попыток.
-                В любой момент вы можете завершить игру, введя 'Выход'
-                Для начала игры выберите сложность, введя число от 1 до 3:
                 """, maxAttempts);
+    }
+
+    public static void startGameMessage() {
+        System.out.println("\nВведите 'Выход', для выхода.\nВведите число от 1 до 3, чтобы начать игру:");
         for (int i = 1; i <= 3; i++) {
             System.out.printf("%d. %s\n", i, difficultyLabels.get(i));
         }
@@ -91,7 +93,7 @@ public class Display {
 
     public static void roundMessage(Player player, String hiddenWord) {
 
-        int mistakes = player.getMistakes();
+        int mistakes = player.getMistakenLetters().size();
         Set<Character> set = player.getGuessedLetters();
 
         if (mistakes > 0) {
@@ -112,12 +114,29 @@ public class Display {
         );
     }
 
+    public static void alreadyGuessed(char ch) {
+        System.out.println("Вы уже открыли символ '" + ch + "'");
+    }
+
     public static void gameOver(Player player, String hiddenWord) {
-        //todo
+        System.out.println(hangmanStages[player.getMistakenLetters().size() - 1]);
+        System.out.printf("""
+                ======== GAME OVER ========
+                Увы, вам не удалось отгадать слово '%s'.
+                Тем не менее, вы угадали %d букв(ы). Сыграем ещё?
+                """, hiddenWord.toUpperCase(), player.getGuessedLetters().size());
+    }
+
+    public static void victoryMessage(Player player, String hiddenWord) {
+        System.out.printf("""
+                ======== П О Б Е Д А! ========
+                Поздравляем! Вы угадали слово — '%s'.
+                И всего лишь %d ошибки! Сыграем ещё?
+                """, hiddenWord.toUpperCase(), player.getMistakenLetters().size());
     }
 
     public static void quitMessage() {
-        System.out.println("Всего ХО-РО-ШЕ-ГО!");
+        System.out.println("Спасибо за игру! Всего хорошего!");
     }
 
 }

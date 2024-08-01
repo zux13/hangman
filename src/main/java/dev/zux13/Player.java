@@ -5,13 +5,13 @@ import java.util.Set;
 
 public class Player {
 
-    private Set<Character> guessedLetters;
-    private int mistakes;
+    private final Set<Character> guessedLetters;
+    private final Set<Character> mistakenLetters;
     private int difficulty;
 
     public Player () {
         guessedLetters = new HashSet<>();
-        mistakes = 0;
+        mistakenLetters = new HashSet<>();
         difficulty = 0;
     }
 
@@ -19,16 +19,8 @@ public class Player {
         return guessedLetters;
     }
 
-    public void setGuessedLetters(Set<Character> guessedLetters) {
-        this.guessedLetters = guessedLetters;
-    }
-
-    public int getMistakes() {
-        return mistakes;
-    }
-
-    public void setMistakes(int mistakes) {
-        this.mistakes = mistakes;
+    public Set<Character> getMistakenLetters() {
+        return mistakenLetters;
     }
 
     public int getDifficulty() {
@@ -39,8 +31,30 @@ public class Player {
         this.difficulty = difficulty;
     }
 
-    public boolean gameOver(int maxAttempts) {
-        return mistakes >= maxAttempts;
+    public boolean alreadyGuessed(char ch) {
+        return guessedLetters.contains(ch);
     }
 
+    public void manageGuess(char guess, String hiddenWord) {
+        for (char ch : hiddenWord.toCharArray()) {
+            if (ch == guess) {
+                guessedLetters.add(guess);
+                return;
+            }
+        }
+        mistakenLetters.add(guess);
+    }
+
+    public boolean won(String hiddenWord) {
+        for (char ch: hiddenWord.toCharArray()) {
+            if (!guessedLetters.contains(ch)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean lost(int maxAttempts) {
+        return mistakenLetters.size() >= maxAttempts;
+    }
 }

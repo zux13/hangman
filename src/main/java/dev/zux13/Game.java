@@ -2,28 +2,52 @@ package dev.zux13;
 
 public class Game {
 
-    private final Player player;
+    private Player player;
     private final int maxAttempts;
     private String hiddenWord;
 
     public Game() {
-        player = new Player();
         maxAttempts = 7;
+        initializeFields();
+    }
+
+    private void initializeFields() {
+        player = new Player();
         hiddenWord = "";
     }
 
-    private void processGuess(char ch) {
-        //todo
+    private void processGuess(char guess) {
+
+        if (player.alreadyGuessed(guess)) {
+            Display.alreadyGuessed(guess);
+            return;
+        }
+
+        player.manageGuess(guess, hiddenWord);
+
+        if (player.won(hiddenWord)) {
+            Display.victoryMessage(player, hiddenWord);
+            initializeFields();
+        }
+
+        if(player.lost(maxAttempts)) {
+            Display.gameOver(player, hiddenWord);
+            initializeFields();
+        }
+
     }
 
     private void startGame() {
-        boolean quitMessage = false;
-        Display.startMessage(maxAttempts);
 
-        while (!player.gameOver(maxAttempts) && !quitMessage) {
+        Display.welcomeMessage(maxAttempts);
+
+        boolean quitMessage = false;
+        while (!quitMessage) {
 
             if (!hiddenWord.isEmpty()) {
                 Display.roundMessage(player, hiddenWord);
+            } else {
+                Display.startGameMessage();
             }
 
             String input = InputHandler.getLine();
@@ -44,7 +68,7 @@ public class Game {
                     Display.invalidInput();
                     continue;
                 }
-                processGuess(input.charAt(0));
+                processGuess(Character.toLowerCase(input.charAt(0)));
             }
         }
     }
